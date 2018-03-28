@@ -35,7 +35,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ATank::AimAt(FVector HitLocation)
 {
-	TankAimingComponent->AimAt(HitLocation);
+	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 	//this does lines below	
 	//auto OurTankName = GetName();
 	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at Hit Location: %s"), *OurTankName, *HitLocation.ToString())
