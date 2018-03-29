@@ -2,7 +2,7 @@
 
 #include "TankPlayerController.h"
 #include "Tank.h"
-
+#include "Engine/World.h"
 
 
 
@@ -22,44 +22,46 @@ void ATankPlayerController::BeginPlay()
 	///UE_LOG(LogTemp,Warning,TEXT ("PlayerControllerBeginPlay"))
 }
 
-ATank * ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-
-}
-
 void ATankPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AimTowardsCrosshair();
 }
 
+ATank * ATankPlayerController::GetControlledTank() const
+{
+	return Cast<ATank>(GetPawn());
+
+}
+
+void ATankPlayerController::AimTowardsCrosshair()
+{
+	if (!GetControlledTank()) { return; }
+
+	FVector HitLocation; //out parameter
+	if (GetSightRayHitLocation(HitLocation))
+	{
+		GetControlledTank()->AimAt(HitLocation);
+	}
+}
+
 bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
 {
-	
+	//Find the crosshair position in pixel coordinates
 	int32 ViewportSizeX, ViewportSizeY;
-	GetViewportSize(ViewportSizeX, ViewportSizeY);
-	
+	GetViewportSize(ViewportSizeX, ViewportSizeY);	
 	auto ScreenLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY *CrosshairYLocation);
+	//de-project the screen position of the crosshair to a world direction
 	FVector LookDirection; 
 	if(GetLookDirection(ScreenLocation,LookDirection))
 	{
+		//line trace along that LookDirection, and see what we hit (up to max range)
 		GetLookVectorHitLocation(LookDirection,	HitLocation);
 	}
 		
-	return false;
+	return true;
 }
 
-bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
-{ 
-	FVector CameraWorldLocation;
-	return DeprojectScreenPositionToWorld(
-		ScreenLocation.X,
-		ScreenLocation.Y,
-		CameraWorldLocation,
-		LookDirection
-	);	
-}
 bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& HitLocation) const
 {
 	FHitResult HitResult;
@@ -79,13 +81,13 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVec
 	return false;
 }
 
-void ATankPlayerController::AimTowardsCrosshair()
+bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
 {
-	if (!GetControlledTank()) { return; }
-
-	FVector HitLocation;
-	if (GetSightRayHitLocation(HitLocation))
-	{
-		GetControlledTank()->AimAt(HitLocation);
-	}
+	FVector CameraWorldLocation;
+	return DeprojectScreenPositionToWorld(
+		ScreenLocation.X,
+		ScreenLocation.Y,
+		CameraWorldLocation,
+		LookDirection
+	);
 }

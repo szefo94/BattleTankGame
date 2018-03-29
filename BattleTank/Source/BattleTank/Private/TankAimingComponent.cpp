@@ -2,7 +2,7 @@
 
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
-
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -10,7 +10,6 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true; //TODO should this really tick?
-
 	// ...
 }
 
@@ -44,16 +43,15 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		//auto OurTankName = GetOwner()->GetName();
+		auto OurTankName = GetOwner()->GetName();
 		//UE_LOG(LogTemp, Warning, TEXT("%s Aiming at %s"),*OurTankName ,*AimDirection.ToString())
-
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f aim solution found"), Time)
+		UE_LOG(LogTemp, Warning, TEXT("%f,  %s aim solution found"), Time, *OurTankName)
 	}
 	else
 	{
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f no aim solve found"), Time)
+		UE_LOG(LogTemp, Warning, TEXT("%f, no aim solve found"), Time)
 	}
 	
 	///for the exercise matter-left code
@@ -69,7 +67,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 	//UE_LOG(LogTemp, Warning, TEXT("AimAsRotator %s"), *DeltaRotator.ToString())
-		Barrel->Elevate(5); //TODO adjustable number in method
+		Barrel->Elevate(DeltaRotator.Pitch); //TODO adjustable number in method
 }
 
 
