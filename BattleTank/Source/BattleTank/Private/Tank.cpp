@@ -2,7 +2,7 @@
 
 #include "Tank.h"
 #include "TankAimingComponent.h"
-
+#include "Engine/World.h"
 
 // Sets default values
 ATank::ATank()
@@ -42,4 +42,10 @@ void ATank::AimAt(FVector HitLocation)
 	//this does lines below	
 	//auto OurTankName = GetName();
 	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at Hit Location: %s"), *OurTankName, *HitLocation.ToString())
+}
+
+void ATank::Fire()
+{
+	auto Time = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("%f, tank fires!"), Time)
 }
