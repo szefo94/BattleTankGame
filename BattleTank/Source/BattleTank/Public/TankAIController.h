@@ -20,4 +20,6 @@ public:
 private:
 		virtual void Tick(float DeltaTime) override;
 
+	//how close will ai tank move towards player in cms
+		float AcceptanceRadius = 3000.;
 };
