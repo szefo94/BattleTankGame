@@ -12,7 +12,7 @@ UTankAimingComponent::UTankAimingComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
+void UTankAimingComponent::AimAt(FVector HitLocation)
 {
 	if (!Barrel) { return; }
 
@@ -36,21 +36,8 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		auto OurTankName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("%s Aiming at %s"),*OurTankName ,*AimDirection.ToString())
-		auto Time = GetWorld()->GetTimeSeconds();
-		//UE_LOG(LogTemp, Warning, TEXT("%f,  %s aim solution found"), Time, *OurTankName)
-	}
-	else
-	{
-		auto Time = GetWorld()->GetTimeSeconds();
-		//UE_LOG(LogTemp, Warning, TEXT("%f, no aim solve found"), Time)
 	}
 	
-	///for the exercise matter-left code
-	//auto OurTankName = GetOwner()->GetName();
-	//auto BarrelLocation = Barrel->GetComponentLocation().ToString();
-	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at Hit Location: %s from %s"), *OurTankName, *HitLocation.ToString(), *BarrelLocation)
 }
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
